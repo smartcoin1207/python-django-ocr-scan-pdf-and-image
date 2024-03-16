@@ -29,6 +29,7 @@ class CreateTokenView(ObtainAuthToken):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
+        print(user)
         return get_token_response(user)
 
 
@@ -89,6 +90,48 @@ def get_or_create_user(request):
         user.save()
     serializer = GoogleUserSerializer(user)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def get_company_users(request, user_id, company_id):
+    user = User.objects.get(id=user_id)
+    if user.role != 'manager':
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+    users = User.objects.filter(company_id=company_id).all().order_by('created_at')
+    serializer = UserSerializer(users, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+def create_new_user(request):
+    data = request.data
+    serializer = UserSerializer(data=data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['PUT', 'DELETE'])
+def manage_user(request, id):
+    try:
+        user = User.objects.get(id=id)
+    except User.DoesNotExist:
+        Response(status=status.HTTP_400_BAD_REQUEST)
+
+    if request.method == 'PUT':
+        data = request.data
+        serializer = UserSerializer(user, data=data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    if request.method == 'DELETE':
+        try:
+            user.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 

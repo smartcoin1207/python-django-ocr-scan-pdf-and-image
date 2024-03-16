@@ -14,9 +14,9 @@ from core import models
 class UserAdmin(BaseUserAdmin):
     """Define the admin pages for users."""
     ordering = ['id']
-    list_display = ['name', 'email']
+    list_display = ['name', 'email', 'company']
     fieldsets = (
-        (None, {'fields': ('email', 'name', 'password')}),
+        (None, {'fields': ('email', 'name', 'code', 'password', 'company', 'role')}),
         (
             _('Permissions'),
             {
@@ -38,7 +38,9 @@ class UserAdmin(BaseUserAdmin):
                 'email',
                 'password1',
                 'password2',
-                'name',
+                'code',
+                'company',
+                'role',
                 'is_active',
                 'is_staff',
                 'is_superuser',
@@ -46,7 +48,12 @@ class UserAdmin(BaseUserAdmin):
         }]
     ]
 
+class CompanyAdmin(admin.ModelAdmin):
+    ordering = ['created_at']
+    list_display = ['name', 'address', 'phone']
+    readonly_fields = ('id',)
+
 admin.site.unregister(TokenProxy)
 admin.site.unregister(Group)
 admin.site.register(models.User, UserAdmin)
-# admin.site.register(models.Product, ProductAdmin)
+admin.site.register(models.Company, CompanyAdmin)

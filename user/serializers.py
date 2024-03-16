@@ -11,7 +11,7 @@ from core.models import User
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
-        fields = ['password', 'name', 'id']
+        fields = ['password', 'code', 'email', 'name', 'id', 'role', 'company']
         extra_kwargs = {'password': {'write_only': True, 'min_length': 8}}
 
     def update(self, instance, validated_data):
