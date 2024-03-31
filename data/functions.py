@@ -1,6 +1,6 @@
 from google.cloud import documentai_v1 as documentai
 import google.generativeai as genai
-import os, json
+import os, json, base64
 
 
 def process_document(file):
@@ -8,8 +8,15 @@ def process_document(file):
     Document AI APIを使用してドキュメントを処理
     """
     # GOOGLE_APPLICATION_CREDENTIALS 環境変数を設定
-    credentials_path = os.path.join(os.path.dirname(__file__), '..', 'credentials.json')
-    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = credentials_path
+    ENV = os.getenv('DJANGO_ENV', 'dev')
+    if ENV == 'dev':
+        credentials_path = os.path.join(os.path.dirname(__file__), '..', 'credentials.json')
+        os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = credentials_path
+    elif ENV == 'prod':
+        encoded_credentials = os.getenv('GOOGLE_CREDENTIALS_BASE64')
+        decoded_credentials = base64.b64decode(encoded_credentials)
+        credentials_json = json.loads(decoded_credentials.decode('utf-8'))
+        os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = credentials_json
 
     #OCRの環境変数を設定
     project_id = 'wingaiocr'
