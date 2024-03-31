@@ -17,8 +17,7 @@ def process_document(file):
         decoded_credentials = base64.b64decode(encoded_credentials)
         credentials_json = json.loads(decoded_credentials.decode('utf-8'))
         # print(credentials_json)
-        os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = credentials_json
-
+        
         with tempfile.NamedTemporaryFile(mode='w', delete=False) as temp_file:
             # Write credentials to the temporary file
             json.dump(credentials_json, temp_file)
@@ -52,7 +51,7 @@ def process_document(file):
     result = documentai_client.process_document(request=request)
 
     os.remove(temp_file_path)
-    
+
     return result.document
 
 
