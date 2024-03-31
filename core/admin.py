@@ -53,7 +53,13 @@ class CompanyAdmin(admin.ModelAdmin):
     list_display = ['name', 'address', 'phone']
     readonly_fields = ('id',)
 
+class ClientAdmin(admin.ModelAdmin):
+    ordering = ['created_at']
+    list_display = ['name', 'address', 'phone']
+    readonly_fields = ('id',)
+
 admin.site.unregister(TokenProxy)
 admin.site.unregister(Group)
 admin.site.register(models.User, UserAdmin)
 admin.site.register(models.Company, CompanyAdmin)
+admin.site.register(models.Client, ClientAdmin)
