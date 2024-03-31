@@ -16,6 +16,7 @@ def process_document(file):
         encoded_credentials = os.getenv('GOOGLE_CREDENTIALS_BASE64')
         decoded_credentials = base64.b64decode(encoded_credentials)
         credentials_json = json.loads(decoded_credentials.decode('utf-8'))
+        print(credentials_json)
         os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = credentials_json
 
     #OCRの環境変数を設定
