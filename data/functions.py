@@ -1,6 +1,6 @@
 from google.cloud import documentai_v1 as documentai
 import google.generativeai as genai
-import os, json, base64
+import os, json, base64, tempfile
 
 
 def process_document(file):
@@ -16,8 +16,16 @@ def process_document(file):
         encoded_credentials = os.getenv('GOOGLE_CREDENTIALS_BASE64')
         decoded_credentials = base64.b64decode(encoded_credentials)
         credentials_json = json.loads(decoded_credentials.decode('utf-8'))
-        print(credentials_json)
+        # print(credentials_json)
         os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = credentials_json
+
+        with tempfile.NamedTemporaryFile(mode='w', delete=False) as temp_file:
+            # Write credentials to the temporary file
+            json.dump(credentials_json, temp_file)
+            temp_file_path = temp_file.name
+
+        # Set the environment variable
+        os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = temp_file_path
 
     #OCRの環境変数を設定
     project_id = 'wingaiocr'
@@ -43,6 +51,8 @@ def process_document(file):
     # Document AIクライアントを使用して処理
     result = documentai_client.process_document(request=request)
 
+    os.remove(temp_file_path)
+    
     return result.document
 
 
