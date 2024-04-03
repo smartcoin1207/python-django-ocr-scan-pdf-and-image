@@ -58,8 +58,21 @@ class ClientAdmin(admin.ModelAdmin):
     list_display = ['name', 'address', 'phone']
     readonly_fields = ('id',)
 
+class HistoryAdmin(admin.ModelAdmin):
+    ordering = ['created_at']
+    list_display = ['name', 'num_pages']
+    readonly_fields = ('id',)
+
+class ResultAdmin(admin.ModelAdmin):
+    ordering = ['created_at']
+    list_display = ['index', 'history']
+    readonly_fields = ('id',)
+
 admin.site.unregister(TokenProxy)
 admin.site.unregister(Group)
 admin.site.register(models.User, UserAdmin)
 admin.site.register(models.Company, CompanyAdmin)
 admin.site.register(models.Client, ClientAdmin)
+admin.site.register(models.History, HistoryAdmin)
+admin.site.register(models.Result, ResultAdmin)
+

@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'core',
     'user',
     'app',
-    'setting'
+    'setting',
+    'django_q',
 ]
 
 MIDDLEWARE = [
@@ -58,6 +59,18 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
 ]
+
+Q_CLUSTER = {
+    'name': 'DjangORM',
+    'workers': 4,
+    'timeout': 120,
+    'retry': 125,
+    'orm': 'default',
+    'save_limit': -1,
+    'ack_failures': True,
+    'max_attempts': 1,
+    'attempt_count': 1
+}
 
 ROOT_URLCONF = 'app.urls'
 

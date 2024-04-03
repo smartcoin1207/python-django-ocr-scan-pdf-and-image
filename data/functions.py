@@ -1,9 +1,12 @@
 from google.cloud import documentai_v1 as documentai
 import google.generativeai as genai
-import os, json, base64, tempfile
+from .utils import get_card_billing_prompt, get_bankbook_prompt
+import os, json, base64, tempfile, logging
+
+logger = logging.getLogger(__name__)
 
 
-def process_document(file):
+def process_data_with_document_ai(data_file_path, mime_type):
     """
     Document AI APIを使用してドキュメントを処理
     """
@@ -17,7 +20,6 @@ def process_document(file):
         decoded_credentials = base64.b64decode(encoded_credentials)
         credentials_json = json.loads(decoded_credentials.decode('utf-8'))
         # print(credentials_json)
-        
         with tempfile.NamedTemporaryFile(mode='w', delete=False) as temp_file:
             # Write credentials to the temporary file
             json.dump(credentials_json, temp_file)
@@ -32,8 +34,8 @@ def process_document(file):
     processor_id = '4f6a660f137b320c'
 
     #ファイルのコンテントを読み出す
-    content = file.read()
-    mime_type = file.content_type
+    with open(data_file_path, 'rb') as file:
+        content = file.read()
 
     # クライアントのインスタンス化
     documentai_client = documentai.DocumentProcessorServiceClient()
@@ -50,30 +52,28 @@ def process_document(file):
     # Document AIクライアントを使用して処理
     result = documentai_client.process_document(request=request)
 
-    os.remove(temp_file_path)
+    if ENV == 'prod':
+        os.remove(temp_file_path)
 
-    return result.document
+    os.remove(data_file_path)
+
+    return result.document.text
 
 
-def generate_json_data(prompt):
+def generate_json_data(ledger_type, result):
+    # logger.info(f"読み取り結果: {result}")
+    if ledger_type == "クレジット明細":
+        prompt = get_card_billing_prompt(result)
+    elif ledger_type == "通帳":
+        prompt = get_bankbook_prompt(result)
     genai.configure(api_key=os.environ["GOOGLE_AI_STUDIO_API_KEY"])
     model = genai.GenerativeModel('gemini-pro')
     response = model.generate_content(prompt)
-
-    # Print the raw response
-    print("Raw response:", response.text)
-
-    # Clean the response
     cleaned_data = response.text.strip('` \n').replace('json\n', '').strip()
-
-    # Print the cleaned data
-    print("Cleaned data:", cleaned_data)
-
-    # Attempt to load the JSON
+    logger.info(f"JSON: {cleaned_data}")
     try:
         data = json.loads(cleaned_data)
         return data
     except json.JSONDecodeError as e:
         print(f"Failed to decode JSON: {e}")
-        # Return or handle the error appropriately
-        return None
+        return {}

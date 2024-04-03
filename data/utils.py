@@ -31,6 +31,7 @@ def get_bankbook_prompt(document_text):
         Your are given the data extracted from bankbook information by google document ai.
         Your job is to skim through its content and return the necessary information.
         The information I want you to return the following five elements:"date", "summary", "deposit", "withdrawal" and "balance".
+        The names for each element usually appear at the beginning in the order same as the data that follow.
         Format the extracted data in the following json form.
         {
             "items": [

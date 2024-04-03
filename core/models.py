@@ -120,10 +120,11 @@ class History(models.Model):
     id = models.SlugField(primary_key=True, max_length=16)
     name = models.CharField(blank=True)
     ledger_type = models.CharField(max_length=50)
-    num_files = models.IntegerField(default=1)
     num_pages = models.IntegerField(default=1)
     user = models.ForeignKey(User, related_name='history', on_delete=models.CASCADE)
     company = models.ForeignKey(Company, related_name='history', on_delete=models.CASCADE, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
 
     def save(self, *args, **kwargs):
         while True:
@@ -140,10 +141,7 @@ class History(models.Model):
 class Result(models.Model):
     """読み取りページデータ"""
     id = models.SlugField(primary_key=True, max_length=16)
-    name = models.CharField(max_length=255, blank=True)
     index = models.IntegerField(default=0)
-    page_number = models.IntegerField(default=1)
-    amount = models.IntegerField(default=0)
     data = models.JSONField()
     history = models.ForeignKey(History, related_name='result', on_delete=models.CASCADE, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -160,7 +158,7 @@ class Result(models.Model):
                 continue
 
     def __str__(self):
-        return self.name
+        return self.id
 
 
 class AccountItem(models.Model):
