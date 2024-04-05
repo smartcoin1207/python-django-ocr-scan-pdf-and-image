@@ -3,19 +3,19 @@ def get_card_billing_prompt(document_text):
         You are an assistant to accountants.
         Your are given the data extracted from a credit card billing statetement by google document ai.
         Your job is to skim through its content and return the necessary information.
-        The information I want you to return are  "date", "payee", and "amount".
+        The information I want you to return are  "日時", "支払い先", and "金額".
         Format the extracted data in the following json form.
         {"total_price": int, "billing_date": "yyyy-mm-dd",
             "items": [
                 {
-                    "date":"yyyy-mm-dd",
-                    "payee": string,
-                    "amount": int
+                    "日時":"yyyy-mm-dd",
+                    "支払い先": string,
+                    "金額": int
                 },
                 {
-                    "date":"yyyy-mm-dd",
-                    "payee": string,
-                    "amount": int
+                    "日時":"yyyy-mm-dd",
+                    "支払い先": string,
+                    "金額": int
                 }
             ]
         }
@@ -30,24 +30,24 @@ def get_bankbook_prompt(document_text):
         You are an assistant to accountants.
         Your are given the data extracted from bankbook information by google document ai.
         Your job is to skim through its content and return the necessary information.
-        The information I want you to return the following five elements:"date", "summary", "deposit", "withdrawal" and "balance".
+        The information I want you to return the following five elements:"日時", "取引内容", "入金", "出金" and "残高".
         The names for each element usually appear at the beginning in the order same as the data that follow.
         Format the extracted data in the following json form.
         {
             "items": [
                 {
-                    "date":"yyyy-mm-dd",
-                    "summary": string,
-                    "deposit": int,
-                    "withdrawal": int,
-                    "balance": int
+                    "日時":"yyyy-mm-dd",
+                    "取引内容": string,
+                    "入金": int,
+                    "出金": int,
+                    "残高": int
                 },
                 {
-                    "date":"yyyy-mm-dd",
-                    "summary": string,
-                    "deposit": int,
-                    "withdrawal": int,
-                    "balance": int
+                    "日時":"yyyy-mm-dd",
+                    "取引内容": string,
+                    "入金": int,
+                    "出金": int,
+                    "残高": int
                 }
             ]
         }

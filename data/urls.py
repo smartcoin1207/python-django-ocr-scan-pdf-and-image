@@ -11,6 +11,6 @@ urlpatterns = [
     path('process/ocr/', views.process_ocr, name='process-ocr'),
     path('result/<slug:id>/', views.manage_result, name='manage_result'),
     path('results/<slug:history_id>/', views.get_results_by_history, name='get-history-results'),
-    path('results/<slug:history_id>/user/<slug:user_id>/', views.get_results_with_history, name='get-results-with-history'),
-    path('history/<slug:company_id>/', views.get_history, name='get-history'),
+    path('results/<slug:history_id>/details/', views.get_results_with_details, name='get-results-with-details'),
+    path('history/client/<slug:client_id>/', views.get_history, name='get-history'),
 ]

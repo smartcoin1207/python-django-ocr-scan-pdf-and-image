@@ -122,6 +122,7 @@ class History(models.Model):
     ledger_type = models.CharField(max_length=50)
     num_pages = models.IntegerField(default=1)
     user = models.ForeignKey(User, related_name='history', on_delete=models.CASCADE)
+    client = models.ForeignKey(Client, related_name='history', on_delete=models.CASCADE)
     company = models.ForeignKey(Company, related_name='history', on_delete=models.CASCADE, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 

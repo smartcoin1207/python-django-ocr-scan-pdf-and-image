@@ -2,10 +2,10 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from django_q.tasks import async_task
-from core.models import  User, Company, Result, History
+from core.models import  User, Client, Company, Result, History
 from .functions import process_data_with_document_ai, generate_json_data
 from .tasks import process_document
-from .serializers import HistorySerializer, ResultSerializer
+from .serializers import HistorySerializer, ResultSerializer, ResultDetailsSerializer
 # from .serializers import (
 #   ClientSerializer,
 #   )
@@ -36,12 +36,14 @@ def process_ocr(request):
     files = request.FILES.getlist('file')
     user_id = request.query_params.get('user')
     company_id = request.query_params.get('company')
+    client_id = request.query_params.get('client')
     ledger_type = request.query_params.get('ledger')
 
     try:
         user = User.objects.get(pk=user_id)
         company = Company.objects.get(pk=company_id)
-    except (User.DoesNotExist, Company.DoesNotExist):
+        client = Client.objects.get(pk=client_id)
+    except (User.DoesNotExist, Company.DoesNotExist, Client.DoesNotExist):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     data = {
@@ -49,7 +51,8 @@ def process_ocr(request):
         'ledger_type': ledger_type,
         'num_pages': len(files),
         'user': user.pk,
-        'company': company.pk
+        'company': company.pk,
+        'client': client.pk
     }
 
     serializer = HistorySerializer(data=data)
@@ -96,16 +99,14 @@ def get_results_by_history(request, history_id):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
-def get_results_with_history(request, history_id):
+def get_results_with_details(request, history_id):
     results = Result.objects.filter(history_id=history_id).all().order_by('index')
-    history = History.objects.get(id=history_id)
-    result_serializer = ResultSerializer(results, many=True)
-    history_serializer = HistorySerializer(history)
-    return Response({'results': result_serializer.data, 'history': history_serializer.data}, status=status.HTTP_200_OK)
+    serializer = ResultDetailsSerializer(results, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
-def get_history(request, company_id):
-    history = History.objects.filter(company_id=company_id).all().order_by('created_at')
+def get_history(request, client_id):
+    history = History.objects.filter(client_id=client_id).all().order_by('created_at')
     serializer = HistorySerializer(history, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
