@@ -19,15 +19,13 @@ def read_from_image(request):
     if 'file' not in request.FILES:
         return Response({"error": "File not provided."}, status=status.HTTP_400_BAD_BAD_REQUEST)
     file = request.FILES['file']
-    if 'type' not in request.data:
-        return Response({'error': 'No type provided'}, status=status.HTTP_400_BAD_REQUEST)
-    ledger_type = request.data['type']
+    mime_type = file.content_type
+    with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+        shutil.copyfileobj(file, temp_file)
+        temp_file_path = temp_file.name
+        result = process_data_with_document_ai(temp_file_path, mime_type)
+    return Response({'data': result }, status=status.HTTP_200_OK)
 
-    result = process_data_with_document_ai(file)
-
-    json_data = generate_json_data(ledger_type, result)
-
-    return Response({'data': json_data }, status=status.HTTP_200_OK)
 
 @api_view(['POST'])
 def process_ocr(request):
