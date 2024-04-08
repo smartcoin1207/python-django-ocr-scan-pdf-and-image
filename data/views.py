@@ -32,6 +32,7 @@ def process_ocr(request):
     if 'file' not in request.FILES:
         return Response({"error": "File not provided."}, status=status.HTTP_400_BAD_BAD_REQUEST)
     files = request.FILES.getlist('file')
+    filename = request.data.get('filename')
     user_id = request.query_params.get('user')
     company_id = request.query_params.get('company')
     client_id = request.query_params.get('client')
@@ -45,7 +46,7 @@ def process_ocr(request):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     data = {
-        'name': files[0].name if files[0].name else '',
+        'name': filename,
         'ledger_type': ledger_type,
         'num_pages': len(files),
         'user': user.pk,
@@ -72,16 +73,19 @@ def process_ocr(request):
         print("Validation errors:", serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['GET', 'PATCH'])
+@api_view(['GET', 'PATCH', 'DELETE'])
 def manage_result(request, id):
-    if request.method == 'GET':
+    try:
         result = Result.objects.get(id=id)
+    except Result.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
         serializer = ResultSerializer(result)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     if request.method == 'PATCH':
         data = request.data.get('data')
-        result = Result.objects.get(id=id)
         result.data = data
         result.save()
         serializer = ResultSerializer(result)
@@ -89,6 +93,13 @@ def manage_result(request, id):
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    if request.method == 'DELETE':
+        try:
+            result.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except:
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
 @api_view(['GET'])
 def get_results_by_history(request, history_id):
