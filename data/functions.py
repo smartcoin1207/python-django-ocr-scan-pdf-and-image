@@ -1,10 +1,13 @@
 from google.cloud import documentai_v1 as documentai
 import google.generativeai as genai
+from openai import OpenAI
 from .utils import get_card_billing_prompt, get_bankbook_prompt
 import os, json, base64, tempfile, logging
+from dotenv import load_dotenv
 
 logger = logging.getLogger(__name__)
 
+# load_dotenv()
 
 def process_data_with_document_ai(data_file_path, mime_type):
     """
@@ -61,15 +64,29 @@ def process_data_with_document_ai(data_file_path, mime_type):
 
 
 def generate_json_data(ledger_type, result):
-    # logger.info(f"読み取り結果: {result}")
+    logger.info(f"読み取り結果: {result}")
     if ledger_type == "クレジット明細":
         prompt = get_card_billing_prompt(result)
     elif ledger_type == "通帳":
         prompt = get_bankbook_prompt(result)
-    genai.configure(api_key=os.environ["GOOGLE_AI_STUDIO_API_KEY"])
-    model = genai.GenerativeModel('gemini-pro')
-    response = model.generate_content(prompt)
-    cleaned_data = response.text.strip('` \n').replace('json\n', '').strip()
+
+    """GEMINI"""
+    # genai.configure(api_key=os.environ["GOOGLE_AI_STUDIO_API_KEY"])
+    # model = genai.GenerativeModel('gemini-pro')
+    # response = model.generate_content(prompt)
+    # cleaned_data = response.text.strip('` \n').replace('json\n', '').strip()
+
+    """GPT-4"""
+    client = OpenAI(
+        api_key=os.environ.get("OPENAI_KEY"),
+    )
+    completion = client.chat.completions.create(
+        model="gpt-4-turbo",
+        messages=[{"role": "user", "content": prompt,}]
+    )
+    response = completion.choices[0].message.content
+    cleaned_data = response.strip('` \n').replace('json\n', '').strip()
+
     logger.info(f"JSON: {cleaned_data}")
     try:
         data = json.loads(cleaned_data)

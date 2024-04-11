@@ -116,6 +116,6 @@ def get_results_with_details(request, history_id):
 
 @api_view(['GET'])
 def get_history(request, client_id):
-    history = History.objects.filter(client_id=client_id).all().order_by('created_at')
+    history = History.objects.filter(client_id=client_id).all().order_by('-created_at')
     serializer = HistorySerializer(history, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
