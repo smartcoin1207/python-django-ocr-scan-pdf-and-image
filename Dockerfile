@@ -14,3 +14,6 @@ COPY . /app
 WORKDIR /app
 
 ENV PATH="/py/bin:$PATH"
+
+# コンテナ内で実行するコマンド
+CMD ["python", "./manage.py", "runserver", "0.0.0.0:80"]
