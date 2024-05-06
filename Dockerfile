@@ -16,4 +16,7 @@ WORKDIR /app
 ENV PATH="/py/bin:$PATH"
 
 # コンテナ内で実行するコマンド
-CMD ["python", "./manage.py", "runserver", "0.0.0.0:80"]
+CMD ["sh", "-c", "python manage.py wait_for_db && \
+                  python manage.py migrate && \
+                  (python manage.py qcluster &) && \
+                  python manage.py runserver 0.0.0.0:80"]
