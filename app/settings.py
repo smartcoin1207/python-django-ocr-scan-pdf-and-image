@@ -11,6 +11,8 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 
 DEBUG = bool(int(os.environ.get('DEBUG', 1)))
 
+CORS_ALLOW_ALL_ORIGINS = True
+
 ALLOWED_HOSTS = []
 ALLOWED_HOSTS.extend(
     filter(
@@ -97,7 +99,7 @@ WSGI_APPLICATION = 'app.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'), conn_max_age=600, ssl_require=True)
+    'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'), conn_max_age=600, ssl_require=False)
 }
 
 # Password validation
