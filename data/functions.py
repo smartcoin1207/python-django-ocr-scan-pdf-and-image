@@ -32,9 +32,9 @@ def process_data_with_document_ai(data_file_path, mime_type):
         os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = temp_file_path
 
     #OCRの環境変数を設定
-    project_id = 'wingaiocr-422912'
-    location = 'us'
-    processor_id = '9d9757961eee00a1'
+    project_id = os.environ.get("DOCUMENT_AI_PROJECT_ID")
+    location = os.environ.get("DOCUMENT_AI_LOCATION")
+    processor_id = os.environ.get("DOCUMENT_AI_PROCESSOR_ID")
 
     #ファイルのコンテントを読み出す
     with open(data_file_path, 'rb') as file:
