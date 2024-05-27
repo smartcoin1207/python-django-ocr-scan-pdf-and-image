@@ -81,7 +81,7 @@ def generate_json_data(ledger_type, result):
         api_key=os.environ.get("OPENAI_KEY"),
     )
     completion = client.chat.completions.create(
-        model="gpt-4-turbo",
+        model="gpt-4o",
         messages=[{"role": "user", "content": prompt,}]
     )
     response = completion.choices[0].message.content
