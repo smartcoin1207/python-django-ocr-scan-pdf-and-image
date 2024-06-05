@@ -11,7 +11,7 @@ updates:
       interval: "monthly"
       timezone: "Asia/Tokyo"
       time: "10:00"
-    assignees:
+    reviewers:
       - "mdo2021"
       - "HaraShun"
     open-pull-requests-limit: 10
@@ -21,7 +21,7 @@ updates:
       interval: "monthly"
       timezone: "Asia/Tokyo"
       time: "10:00"
-    assignees:
+    reviewers:
       - "mdo2021"
     open-pull-requests-limit: 10
   - package-ecosystem: "pip"
