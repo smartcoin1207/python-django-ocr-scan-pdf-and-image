@@ -21,7 +21,7 @@ jobs:
           role-to-assume: 'arn:aws:iam::891377265854:role/github-actions-oidc-role' # 作成した IAM ロールの ARN
 
       # ECR ログイン
-      - uses: aws-actions/amazon-ecr-login@v1
+      - uses: aws-actions/amazon-ecr-login@v2
         id: login-ecr # outputs で参照するために id を設定
 
       # Docker イメージを build・push する
