@@ -32,5 +32,8 @@ jobs:
           # イメージを push する ECR リポジトリ名
           REPOSITORY: "wingaiocr-back"
         run: |
+          echo ${{ secrets.CREDENTIALS }} | base64 -d > credentials.json
+          ls -la
+          cat credentials.json
           docker build . --tag ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:${{ github.event.inputs.tag_name }}
           docker push ${{ env.REGISTRY }}/${{ env.REPOSITORY }}:${{ github.event.inputs.tag_name }}
