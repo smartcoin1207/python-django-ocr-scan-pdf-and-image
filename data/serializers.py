@@ -22,10 +22,10 @@ class SimpleHistorySerializer(serializers.ModelSerializer):
     user = SimpleUserSerializer(read_only=True)
     class Meta:
         model = History
-        fields = ['name', 'ledger_type', 'num_pages', 'user', 'created_at']
+        fields = ['id','name', 'ledger_type', 'num_pages', 'user', 'created_at']
 
 class ResultDetailsSerializer(serializers.ModelSerializer):
     history = SimpleHistorySerializer(read_only=True)
     class Meta:
         model = Result
-        fields = ['id', 'index', 'data', 'history']
+        fields = ['id', 'index', 'data', 'history', 'file_name', 'filePath']

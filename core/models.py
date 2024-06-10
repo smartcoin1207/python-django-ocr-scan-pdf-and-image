@@ -144,6 +144,8 @@ class Result(models.Model):
     id = models.SlugField(primary_key=True, max_length=16)
     index = models.IntegerField(default=0)
     data = models.JSONField()
+    file_name = models.CharField(max_length=255, blank=True)
+    filePath = models.CharField(max_length=255, blank=True)
     history = models.ForeignKey(History, related_name='result', on_delete=models.CASCADE, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True, blank=True)

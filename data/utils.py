@@ -6,6 +6,7 @@ def get_card_billing_prompt(document_text):
         The information I want you to return are  "日時", "支払い先", and "金額".
         Format the extracted data in the following json form.
         If there is no valid data passed, generate the empty json object.
+        There is no need any description in response.
         {"total_price": int, "billing_date": "yyyy-mm-dd",
             "items": [
                 {
@@ -35,15 +36,9 @@ def get_bankbook_prompt(document_text):
         The names for each element usually appear at the beginning in the order same as the data that follow.
         Format the data in the following json form.
         If there is no valid data passed, generate the empty json object.
+        There is no need any description in response.
         {
             "items": [
-                {
-                    "日時":"yyyy-mm-dd",
-                    "取引内容": string,
-                    "入金": int,
-                    "出金": int,
-                    "残高": int
-                },
                 {
                     "日時":"yyyy-mm-dd",
                     "取引内容": string,

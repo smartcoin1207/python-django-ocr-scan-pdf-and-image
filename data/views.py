@@ -5,7 +5,7 @@ from django_q.tasks import async_task
 from core.models import  User, Client, Company, Result, History
 from .functions import process_data_with_document_ai, generate_json_data
 from .tasks import process_document
-from .serializers import HistorySerializer, ResultSerializer, ResultDetailsSerializer
+from .serializers import HistorySerializer, ResultSerializer, ResultDetailsSerializer, SimpleHistorySerializer
 # from .serializers import (
 #   ClientSerializer,
 #   )
@@ -32,6 +32,7 @@ def process_ocr(request):
     if 'file' not in request.FILES:
         return Response({"error": "File not provided."}, status=status.HTTP_400_BAD_BAD_REQUEST)
     files = request.FILES.getlist('file')
+    filenames = request.data.getlist('filenames[]')
     filename = request.data.get('filename')
     user_id = request.query_params.get('user')
     company_id = request.query_params.get('company')
@@ -67,7 +68,7 @@ def process_ocr(request):
             with tempfile.NamedTemporaryFile(delete=False) as temp_file:
                 shutil.copyfileobj(file, temp_file)
                 temp_file_path = temp_file.name
-            async_task(process_document, idx, history_id, mime_type, ledger_type, temp_file_path)
+            async_task(process_document, idx, history_id, mime_type, ledger_type, temp_file_path, filenames[idx])
         return Response({'history_id': history_id}, status=status.HTTP_201_CREATED)
     else:
         print("Validation errors:", serializer.errors)
@@ -101,6 +102,27 @@ def manage_result(request, id):
         except:
             return Response(status=status.HTTP_204_NO_CONTENT)
 
+@api_view(['GET', 'PATCH', 'DELETE'])
+def filename_change(request, id):
+    try:
+        result = Result.objects.get(id=id)
+    except Result.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        serializer = ResultSerializer(result)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    if request.method == 'PATCH':
+        data = request.data.get('data')
+        result.file_name = data
+        result.save()
+        serializer = ResultSerializer(result)
+        if serializer.is_valid:
+            return Response(status=status.HTTP_200_OK)
+        else:
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)      
+
 @api_view(['GET'])
 def get_results_by_history(request, history_id):
     results = Result.objects.filter(history_id=history_id).all().order_by('index')
@@ -117,5 +139,5 @@ def get_results_with_details(request, history_id):
 @api_view(['GET'])
 def get_history(request, client_id):
     history = History.objects.filter(client_id=client_id).all().order_by('-created_at')
-    serializer = HistorySerializer(history, many=True)
+    serializer = SimpleHistorySerializer(history, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
