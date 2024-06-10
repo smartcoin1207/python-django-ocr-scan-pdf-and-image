@@ -1,4 +1,4 @@
-Django>=4.2.6, <5.1
+Django>=4.2.6, <4.3
 django-cors-headers>=4.3.0, <4.4
 django-filter>=23.3, <25.0
 djangorestframework>=3.14.0, <3.16
