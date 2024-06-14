@@ -65,7 +65,7 @@ def process_data_with_document_ai(data_file_path, mime_type):
 
 def generate_json_data(ledger_type, result):
     logger.info(f"読み取り結果: {result}")
-    if ledger_type == "クレジット明細":
+    if ledger_type == "クレジットカード":
         prompt = get_card_billing_prompt(result)
     elif ledger_type == "通帳":
         prompt = get_bankbook_prompt(result)

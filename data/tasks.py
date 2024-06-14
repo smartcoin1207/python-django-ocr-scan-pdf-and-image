@@ -1,5 +1,8 @@
 import logging
 from .serializers import ResultSerializer
+import os, logging
+import time
+from django.conf import settings
 from .functions import (
     process_data_with_document_ai,
     generate_json_data,
@@ -7,9 +10,23 @@ from .functions import (
 
 logger = logging.getLogger(__name__)
 
-def process_document(idx, history_id, mime_type, ledger_type, file_path):
+def process_document(idx, history_id, mime_type, ledger_type, file_path, filename):
     logger.info(f"STARTED: PROCESS No.{idx}")
     try:
+        uploads_dir = os.path.join(settings.BASE_DIR, 'media')
+        os.makedirs(uploads_dir, exist_ok=True)
+
+        # Construct the file path for saving the file
+        timestamp = str(int(time.time()))
+        file_extension = ".jpg"
+        saved_file_name = f"{timestamp}-{idx}-{file_extension}"
+        saved_file_path = os.path.join(uploads_dir, saved_file_name)
+
+        # Copy the file to the uploads directory
+        with open(saved_file_path, 'wb') as f:
+            with open(file_path, 'rb') as source_file:
+                f.write(source_file.read())
+                
         result = process_data_with_document_ai(file_path, mime_type)
         logger.info(f"Sanned info {result}")
         json_data = generate_json_data(ledger_type, result)
@@ -17,7 +34,9 @@ def process_document(idx, history_id, mime_type, ledger_type, file_path):
         data = {
             "index": idx,
             "data": json_data,
-            "history": history_id
+            "history": history_id,
+            "file_name": filename,
+            "filePath" : "https://64.media.tumblr.com/1a350b5cc62253f0ff40840ade905ad0/tumblr_inline_o4hw39a1oN1qck6it_1280.jpg"
         }
 
         serializer = ResultSerializer(data=data)
