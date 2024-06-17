@@ -141,3 +141,20 @@ def get_history(request, client_id):
     history = History.objects.filter(client_id=client_id).all().order_by('-created_at')
     serializer = SimpleHistorySerializer(history, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+@api_view(['GET', 'PATCH', 'DELETE'])
+def history_filename_change(request, history_id):
+    try:
+        history = History.objects.get(id=history_id)
+    except History.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'PATCH':
+        data = request.data.get('data')
+        history.name = data
+        history.save()
+        serializer = HistorySerializer(history)
+        if serializer.is_valid:
+            return Response(status=status.HTTP_200_OK)
+        else:
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)      
