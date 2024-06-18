@@ -1,4 +1,4 @@
-FROM python:3.11
+FROM python:3.12
 LABEL maintainer="yoshiMT2.com"
 
 ENV PYTHONUNBUFFERED 1
