@@ -14,4 +14,5 @@ urlpatterns = [
     path('results/<slug:history_id>/', views.get_results_by_history, name='get-history-results'),
     path('results/<slug:history_id>/details/', views.get_results_with_details, name='get-results-with-details'),
     path('history/client/<slug:client_id>/', views.get_history, name='get-history'),
+    path('history/filename_change/<slug:history_id>/', views.history_filename_change, name='history_filename_change'),
 ]

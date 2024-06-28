@@ -1,4 +1,4 @@
-FROM python:3.11
+FROM python:3.12
 LABEL maintainer="yoshiMT2.com"
 
 ENV PYTHONUNBUFFERED 1
@@ -8,6 +8,10 @@ RUN apt-get update && apt-get install -y postgresql-client gcc g++ build-essenti
 RUN /py/bin/pip install --upgrade pip
 COPY requirements.txt /requirements.txt
 RUN /py/bin/pip install -r /requirements.txt
+
+# setuptoolsのインストールを追加
+RUN /py/bin/pip install setuptools
+
 RUN apt-get autoremove -y && apt-get clean
 
 COPY . /app

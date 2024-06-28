@@ -5,7 +5,7 @@ from .utils import get_card_billing_prompt, get_bankbook_prompt
 import os, json, base64, tempfile, logging
 from dotenv import load_dotenv
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)    
 
 # load_dotenv()
 
