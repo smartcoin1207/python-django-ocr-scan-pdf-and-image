@@ -31,12 +31,13 @@ def process_document(idx, history_id, mime_type, ledger_type, file_path, filenam
         logger.info(f"Sanned info {result}")
         json_data = generate_json_data(ledger_type, result)
 
+        filepath_filename = os.path.basename(saved_file_path)
         data = {
             "index": idx,
             "data": json_data,
             "history": history_id,
             "file_name": filename,
-            "filePath" : "https://64.media.tumblr.com/1a350b5cc62253f0ff40840ade905ad0/tumblr_inline_o4hw39a1oN1qck6it_1280.jpg"
+            "filePath" : filepath_filename
         }
 
         serializer = ResultSerializer(data=data)

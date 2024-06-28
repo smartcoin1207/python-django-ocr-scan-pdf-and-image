@@ -1,4 +1,4 @@
-from google.cloud import documentai_v1 as documentai
+from google.cloud import documentai_v1beta3 as documentai
 import google.generativeai as genai
 from openai import OpenAI
 from .utils import get_card_billing_prompt, get_bankbook_prompt
